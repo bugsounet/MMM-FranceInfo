@@ -8,8 +8,44 @@
 Module.register("MMM-FranceInfo", {
   defaults: {
     debug: false,
+    dev: true,
     update: "15m",
-    flux: [ "Titres", "Vidéos", "Diaporamas", "France" ]
+    maxItems: 3,
+    flux: [
+      "Titres",
+      //"Vidéos",
+      //"Diaporamas",
+      //"France",
+      //"Politique",
+      //"Société",
+      //"Faits divers",
+      //"Justice",
+      //"Monde",
+      //"Afrique",
+      //"Amériques",
+      //"Europe",
+      //"Proche Orient",
+      //"Environnement",
+      //"Tendances",
+      //"Entreprises",
+      //"Marchés",
+      //"Immobilier",
+      //"Sports",
+      //"Foot",
+      //"Rugby",
+      //"F1",
+      //"Découvertes",
+      //"Sciences",
+      //"Santé",
+      //"Animaux",
+      //"Bizarre",
+      //"Buzz+",
+      //"Médias",
+      //"Cinéma",
+      //"Musique",
+      "Internet"
+    ]
+
   },
 
   start: function () {

@@ -31,6 +31,118 @@ module.exports = NodeHelper.create({
         from: "France",
         url : "https://www.francetvinfo.fr/france.rss"
       },
+      {
+        from: "Politique",
+        url: "https://www.francetvinfo.fr/politique.rss"
+      },
+      {
+        from: "Société",
+        url: "https://www.francetvinfo.fr/societe.rss"
+      },
+      {
+        from: "Faits divers",
+        url: "https://www.francetvinfo.fr/faits-divers.rss"
+      },
+      {
+        from: "Justice",
+        url: "https://www.francetvinfo.fr/justice.rss"
+      },
+      {
+        from: "Monde",
+        url: "https://www.francetvinfo.fr/monde.rss"
+      },
+      {
+        from: "Afrique",
+        url: "https://www.francetvinfo.fr/afrique.rss"
+      },
+      {
+        from: "Amériques",
+        url: "https://www.francetvinfo.fr/ameriques.rss"
+      },
+      {
+        from: "Europe",
+        url: "https://www.francetvinfo.fr/europe.rss"
+      },
+      {
+        from: "Proche Orient",
+        url: "https://www.francetvinfo.fr/proche-orient.rss"
+      },
+      {
+        from: "Environnement",
+        url: "https://www.francetvinfo.fr/environnement.rss"
+      },
+      {
+        from: "Tendances",
+        url: "https://www.francetvinfo.fr/tendances.rss"
+      },
+      {
+        from: "Entreprises",
+        url: "https://www.francetvinfo.fr/entreprises.rss"
+      },
+      {
+        from: "Marchés",
+        url: "https://www.francetvinfo.fr/marches.rss"
+      },
+      {
+        from: "Immobilier",
+        url: "https://www.francetvinfo.fr/immobilier.rss"
+      },
+      {
+        from: "Sports",
+        url: "https://www.francetvinfo.fr/sports.rss"
+      },
+      {
+        from: "Foot",
+        url: "https://www.francetvinfo.fr/foot.rss"
+      },
+      {
+        from: "Rugby",
+        url: "https://www.francetvinfo.fr/rugby.rss"
+      },
+      {
+        from: "F1",
+        url: "https://www.francetvinfo.fr/f1.rss"
+      },
+      {
+        from: "Découvertes",
+        url: "https://www.francetvinfo.fr/decouverte.rss"
+      },
+      {
+        from: "Sciences",
+        url: "https://www.francetvinfo.fr/sciences.rss"
+      },
+      {
+        from: "Santé",
+        url: "https://www.francetvinfo.fr/sante.rss"
+      },
+      {
+        from: "Animaux",
+        url: "https://www.francetvinfo.fr/animaux.rss"
+      },
+      {
+        from: "Bizarre",
+        url: "https://www.francetvinfo.fr/bizarre.rss"
+      },
+      {
+        from: "Buzz+",
+        url: "https://www.francetvinfo.fr/culture.rss"
+      },
+      {
+        from: "Médias",
+        url: "https://www.francetvinfo.fr/medias.rss"
+      },
+      {
+        from: "Cinéma",
+        url: "https://www.francetvinfo.fr/cinema.rss"
+      },
+      {
+        from: "Musique",
+        url: "https://www.francetvinfo.fr/musique.rss"
+      },
+      {
+        from: "Internet",
+        url: "https://www.francetvinfo.fr/internet.rss"
+      },
     ]
     this.error = false
   },
@@ -58,6 +170,7 @@ module.exports = NodeHelper.create({
 
   initialize: async function () {
     await this.getInfos()
+    log("Flux RSS chargé: " + this.config.flux.length + "/" + this.flux.length)
     console.log("[FRINFO] MMM-FranceInfo est maintenant initialisé !")
     this.sendSocketNotification("INITIALIZED")
   },
@@ -65,7 +178,22 @@ module.exports = NodeHelper.create({
   getInfos: async function () {
     // fetch all RSS infos
     await this.checkRSS()
-    log("Titres trouvé:", this.RSS.length)
+    log("Titres trouvés:", this.RSS.length)
+
+    // sort by date
+    this.RSS.sort(function (a, b) {
+      var dateA = new Date(a.pubdate);
+      var dateB = new Date(b.pubdate);
+      return dateB - dateA;
+    })
+    log("Titres classés par date: Done ✓")
+
+    if (this.config.maxItems > 0) {
+     this.RSS = this.RSS.slice(0, this.config.maxItems)
+     log("Titres affichés:", this.RSS.length)
+    }
+
+    if (this.config.dev) log("DATA:", this.RSS)
     this.sendSocketNotification("DATA", this.RSS)
   },
 
@@ -78,6 +206,7 @@ module.exports = NodeHelper.create({
           await this.getRssInfo(flux.from, flux.url)
           count++
         }
+        else count++
         if (count == this.flux.length) resolve()
       })
     })
@@ -89,17 +218,16 @@ module.exports = NodeHelper.create({
       const nodeVersion = Number(process.version.match(/^v(\d+\.\d+)/)[1]);
       const opts = {
         headers: {
-          "User-Agent": "Mozilla/5.0 (Node.js " + nodeVersion + ") MMM-FranceInfo " + require('./package.json').version + " (https://github.com/bugsounet/MMM-FranceInfo)",
-          "Cache-Control": "max-age=0, no-cache, no-store, must-revalidate",
-          Pragma: "no-cache"
+          "User-Agent": "Mozilla/5.0 (Node.js " + nodeVersion + ") MMM-FranceInfo v" + require('./package.json').version + " (https://github.com/bugsounet/MMM-FranceInfo)",
+          "Cache-Control": "max-age=0, no-cache, no-store, must-revalidate", Pragma: "no-cache"
         },
         encoding: null
       };
-      log ("Fetch Rss infos from:", url)
+      log ("Fetch Rss infos for:", from, "(", url, ")")
 
       request(url, opts)
         .on("error", error => {
-          log("error!", error)
+          log("Error!", error)
         })
         .pipe(rss)
 
@@ -108,17 +236,17 @@ module.exports = NodeHelper.create({
           title: item.title,
           description: item.description,
           pubdate: item.pubdate,
-          image: item.enclosure.url,
+          image: item.enclosure && item.enclosure.url ? item.enclosure.url : null,
           url: item.link,
           from: from
         })
       })
       rss.on("end", () => {
-        log("fetch done for:", url)
+        log("Fetch done for:", from)
         resolve()
       })
       rss.on("error", error => {
-        log("fetch error", error)
+        log("Fetch error for url:", url, error)
         resolve()
       })
     })
