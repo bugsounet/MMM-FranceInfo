@@ -1,0 +1,16 @@
+{
+  "name": "MMM-FranceInfo",
+  "version": "0.0.1",
+  "description": "France Info Rss Reader",
+  "main": "MMM-FranceInfo.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bugsounet/MMM-FranceInfo"
+  },
+  "author": "@bugsounet",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bugsounet/MMM-FranceInfo/issues"
+  },
+  "homepage": "https://github.com/bugsounet/MMM-FranceInfo"
+}
