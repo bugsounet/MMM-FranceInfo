@@ -8,6 +8,7 @@
 Module.register("MMM-FranceInfo", {
   defaults: {
     debug: false,
+    update: "15m",
     flux: [ "Titres" ]
   },
 
