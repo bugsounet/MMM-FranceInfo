@@ -9,7 +9,7 @@ Module.register("MMM-FranceInfo", {
   defaults: {
     debug: false,
     update: "15m",
-    flux: [ "Titres" ]
+    flux: [ "Titres", "Vidéos", "Diaporamas", "France" ]
   },
 
   start: function () {
@@ -28,6 +28,9 @@ Module.register("MMM-FranceInfo", {
     switch (notification) {
       case "INITIALIZED":
         console.log("[FRINFO] Prêt!")
+        break
+      case "DATA":
+        console.log("[FRINFO] Data", payload)
         break
     }
   },

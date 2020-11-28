@@ -12,5 +12,9 @@
   "bugs": {
     "url": "https://github.com/bugsounet/MMM-FranceInfo/issues"
   },
-  "homepage": "https://github.com/bugsounet/MMM-FranceInfo"
+  "homepage": "https://github.com/bugsounet/MMM-FranceInfo",
+  "dependencies": {
+    "feedme": "^2.0.1",
+    "request": "^2.88.2"
+  }
 }
