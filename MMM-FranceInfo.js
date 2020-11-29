@@ -102,17 +102,21 @@ Module.register("MMM-FranceInfo", {
     }
     if (this.item > this.RSS.length-1) this.item = 0
 
-    var contener = document.getElementById("FRANCEINFO_CONTENER")
-    contener.classList.add("hideArticle")
-    contener.classList.remove("showArticle")
-
     var title = document.getElementById("FRANCEINFO_TITLE")
     var image = document.getElementById("FRANCEINFO_IMAGE")
     var description = document.getElementById("FRANCEINFO_DESCRIPTION")
     var source = document.getElementById("FRANCEINFO_SOURCE")
     var published = document.getElementById("FRANCEINFO_TIME")
+    var contener = document.getElementById("FRANCEINFO_CONTENER")
+
+    contener.classList.add("hideArticle")
+    contener.classList.remove("showArticle")
+
     source.classList.remove("start")
     source.classList.add("stop")
+
+    description.classList.add("hideArticle")
+    description.classList.remove("showArticle")
 
     this.fade = setTimeout(()=>{
       if (this.RSS[this.item]) {
@@ -126,6 +130,8 @@ Module.register("MMM-FranceInfo", {
         contener.classList.add("showArticle")
         source.classList.remove("stop")
         source.classList.add("start")
+        description.classList.remove("hideArticle")
+        description.classList.add("showArticle")
         this.DisplayNext()
       } else {
         console.log("[FRINFO] RSS error")

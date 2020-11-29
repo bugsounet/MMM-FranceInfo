@@ -54,7 +54,23 @@
 }
 
 #FRANCEINFO_DESCRIPTION {
+  opacity: 0;
   line-height: 25px;
+}
+
+#FRANCEINFO_DESCRIPTION.showArticle {
+  animation: 3s ease 0s normal forwards 1 fadein;
+}
+
+@keyframes fadein{
+  0%   { opacity:0; }
+  66%  { opacity:0; }
+  100% { opacity:1; }
+}
+
+#FRANCEINFO_DESCRIPTION.hideArticle {
+  opacity: 1;
+  animation: none;
 }
 
 #FRANCEINFO_FOOTER {
