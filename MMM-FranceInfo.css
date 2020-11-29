@@ -1,0 +1,54 @@
+/* Magic Mirror
+ * Module: FranceInfo
+ *
+ * By @bugsounet -- Dupont Cédric <bugsounet@bugsounet.fr>
+ * MIT Licensed.
+ */
+
+#FRANCEINFO_CONTENER {
+  line-height:1.1em;
+  width: 100%;
+}
+
+#FRANCEINFO_CONTENER.showArticle {
+  opacity: 1;
+  transition: opacity 1s linear;
+}
+
+#FRANCEINFO_CONTENER.hideArticle {
+  opacity: 0;
+  transition: opacity 1s linear;
+}
+
+#FRANCEINFO_ARTICLE {
+  display:block;
+  color: #F99;
+  font-size:90%;
+}
+
+#FRANCEINFO_CONTENT {
+  padding: 10px;
+  font-size: 70%;
+  text-align: left;
+  height: 70px;
+}
+
+#FRANCEINFO_IMAGE {
+  margin-right: 10px;
+  float: left;
+  max-width: 10vw;
+  max-height: 10vh;
+  text-align: left;
+}
+
+#FRANCEINFO_FOOTER {
+  text-align:right;
+}
+
+#FRANCEINFO_SOURCE,
+#FRANCEINFO_TIME {
+  font-size:60%;
+  text-align:right;
+  display:inline-block;
+  margin-left: 5px;
+}

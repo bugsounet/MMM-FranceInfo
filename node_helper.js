@@ -19,7 +19,7 @@ module.exports = NodeHelper.create({
     this.RSSLoaded = []
     this.flux= [
       {
-        from: "Titres",
+        from: "Les Titres",
         url: "https://www.francetvinfo.fr/titres.rss"
       },
       {
@@ -231,7 +231,7 @@ module.exports = NodeHelper.create({
           "Cache-Control": "max-age=0, no-cache, no-store, must-revalidate", Pragma: "no-cache"
         },
         encoding: null
-      };
+      }
       log ("Fetch Rss infos:", from, "(", url, ")")
 
       request(url, opts)
@@ -247,7 +247,7 @@ module.exports = NodeHelper.create({
           pubdate: item.pubdate,
           image: item.enclosure && item.enclosure.url ? item.enclosure.url : null,
           url: item.link,
-          from: from
+          from: "franceinfo: " + from
         })
       })
       rss.on("end", () => {
@@ -277,9 +277,7 @@ module.exports = NodeHelper.create({
 
   /** Timer des mise a jours **/
   scheduleNextFetch: function () {
-    if (this.config.update < 60 * 1000) {
-      this.config.update = 60 * 1000
-    }
+    if (this.config.update < 60 * 1000) this.config.update = 60 * 1000
 
     clearInterval(this.updateTimer)
     log("Update Timer On:", this.config.update, "ms")
@@ -293,37 +291,39 @@ module.exports = NodeHelper.create({
   /** ***** **/
 
   /** convert h m s to ms **/
-  getUpdateTime: function(intervalString) {
-    let regexString = new RegExp("^\\d+[smhd]{1}$")
-    let updateIntervalMillisecond = 0
+  getUpdateTime: function(str) {
+    let ms = 0, time, type, value
+    let time_list = ('' + str).split(' ').filter(v => v != '' && /^(\d{1,}\.)?\d{1,}([wdhms])?$/i.test(v))
 
-    if (regexString.test(intervalString)) {
-      let regexInteger = "^\\d+"
-      let integer = intervalString.match(regexInteger)
-      let regexLetter = "[smhd]{1}$"
-      let letter = intervalString.match(regexLetter)
+    for(let i = 0, len = time_list.length; i < len; i++){
+      time = time_list[i]
+      type = time.match(/[wdhms]$/i)
 
-      let millisecondsMultiplier = 1000
-      switch (String(letter)) {
-        case "s":
-          millisecondsMultiplier = 1000
+      if(type){
+        value = Number(time.replace(type[0], ''))
+
+        switch(type[0].toLowerCase()){
+          case 'w':
+            ms += value * 604800000
+            break
+          case 'd':
+            ms += value * 86400000
+            break
+          case 'h':
+            ms += value * 3600000
+            break
+          case 'm':
+            ms += value * 60000
+            break
+          case 's':
+            ms += value * 1000
           break
-        case "m":
-          millisecondsMultiplier = 1000 * 60
-          break
-        case "h":
-          millisecondsMultiplier = 1000 * 60 * 60
-          break
-        case "d":
-          millisecondsMultiplier = 1000 * 60 * 60 * 24
-          break
+        }
+      } else if(!isNaN(parseFloat(time)) && isFinite(time)){
+        ms += parseFloat(time)
       }
-      // convert the string into seconds
-      updateIntervalMillisecond = millisecondsMultiplier * integer
-    } else {
-      updateIntervalMillisecond = 1000 * 60 * 60 * 24
     }
-    return updateIntervalMillisecond
-  },
+    return ms
+  }
 
 });
