@@ -38,7 +38,8 @@
 }
 
 #FRANCEINFO_CONTENT {
-  padding: 10px;
+  padding: 5px;
+  margin-top: 1px;
   font-size: 70%;
   text-align: left;
   height: 70px;
@@ -50,6 +51,10 @@
   max-width: 10vw;
   max-height: 10vh;
   text-align: left;
+}
+
+#FRANCEINFO_DESCRIPTION {
+  line-height: 25px;
 }
 
 #FRANCEINFO_FOOTER {
@@ -73,7 +78,38 @@
   margin-right: 10px;
 }
 
-#FRANCEINFO_SOURCE,
+#FRANCEINFO_SOURCE {
+  margin-right: 8px;
+  font-weight: bold;
+  margin-top: -9px;
+  margin-bottom: 5px;
+  text-align: left;
+}
+
+#FRANCEINFO_SOURCE.start {
+  animation-duration: .8s;
+  animation-name: clignoter;
+  animation-iteration-count: 2;
+  transition: none;
+  animation-delay: 1s;
+}
+
+#FRANCEINFO_SOURCE.stop {
+  animation-name: stopclignoter;
+  animation-iteration-count: 1;
+
+}
+
+@keyframes clignoter {
+  0%   { opacity:1; }
+  40%  { opacity:0; }
+  100% { opacity:1; }
+}
+
+@keyframes stopclignoter {
+  0%   { opacity:1; }
+}
+
 #FRANCEINFO_TIME {
   font-size: 60%;
   text-align: right;

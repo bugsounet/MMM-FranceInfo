@@ -111,6 +111,8 @@ Module.register("MMM-FranceInfo", {
     var description = document.getElementById("FRANCEINFO_DESCRIPTION")
     var source = document.getElementById("FRANCEINFO_SOURCE")
     var published = document.getElementById("FRANCEINFO_TIME")
+    source.classList.remove("start")
+    source.classList.add("stop")
 
     this.fade = setTimeout(()=>{
       if (this.RSS[this.item]) {
@@ -118,10 +120,12 @@ Module.register("MMM-FranceInfo", {
         image.src = this.RSS[this.item].image
         image.addEventListener('error', () => { image.src = this.file("franceinfo.png") }, false)
         description.innerHTML = this.RSS[this.item].description
-        source.textContent = "(" + this.RSS[this.item].from + (this.config.debug ? " [" + this.item + "/" + this.RSS.length + "])" : ")")
+        source.textContent = this.RSS[this.item].from + (this.config.debug ? " [" + this.item + "/" + this.RSS.length + "])" : "")
         published.textContent = moment(new Date(this.RSS[this.item].pubdate)).fromNow()
         contener.classList.remove("hideArticle")
         contener.classList.add("showArticle")
+        source.classList.remove("stop")
+        source.classList.add("start")
         this.DisplayNext()
       } else {
         console.log("[FRINFO] RSS error")
@@ -163,21 +167,21 @@ Module.register("MMM-FranceInfo", {
     content.id= "FRANCEINFO_CONTENT"
     var image = document.createElement("img")
     image.id = "FRANCEINFO_IMAGE"
+    var source = document.createElement("div")
+    source.id = "FRANCEINFO_SOURCE"
     var description= document.createElement("div")
     description.id = "FRANCEINFO_DESCRIPTION"
     contener.appendChild(content)
     content.appendChild(image)
+    content.appendChild(source)
     content.appendChild(description)
 
     var footer= document.createElement("div")
     footer.id = "FRANCEINFO_FOOTER"
-    var source = document.createElement("div")
-    source.id = "FRANCEINFO_SOURCE"
     var published = document.createElement("div")
     published.id = "FRANCEINFO_TIME"
     contener.appendChild(footer)
     footer.appendChild(published)
-    footer.appendChild(source)
 
     wrapper.appendChild(contener)
 
