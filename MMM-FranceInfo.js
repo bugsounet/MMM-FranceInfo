@@ -21,7 +21,7 @@ Module.register("MMM-FranceInfo", {
       //"Société",
       //"Faits divers",
       //"Justice",
-      //"Monde",
+      "Monde",
       //"Afrique",
       //"Amériques",
       //"Europe",
@@ -118,7 +118,7 @@ Module.register("MMM-FranceInfo", {
         image.src = this.RSS[this.item].image
         image.addEventListener('error', () => { image.src = this.file("franceinfo.png") }, false)
         description.innerHTML = this.RSS[this.item].description
-        source.textContent = this.RSS[this.item].from + (this.config.debug ? " (" + this.item + "/" + this.RSS.length + ")" : "")
+        source.textContent = "(" + this.RSS[this.item].from + (this.config.debug ? " [" + this.item + "/" + this.RSS.length + "])" : ")")
         published.textContent = moment(new Date(this.RSS[this.item].pubdate)).fromNow()
         contener.classList.remove("hideArticle")
         contener.classList.add("showArticle")
@@ -128,7 +128,7 @@ Module.register("MMM-FranceInfo", {
         this.item = 0
         this.displayChoice()
       }
-    }, 1000)
+    }, 1200)
   },
 
  /** Cree la structure du dom **/
@@ -141,6 +141,19 @@ Module.register("MMM-FranceInfo", {
 
     var article= document.createElement("div")
     article.id= "FRANCEINFO_ARTICLE"
+
+    var logo = document.createElement("div")
+    logo.id = "FRANCEINFO_LOGO"
+    article.appendChild(logo)
+    partA = document.createElement("div")
+    partA.id ="FRANCEINFO_LOGO_PARTA"
+    partA.textContent = "franceinfo"
+    logo.appendChild(partA)
+    partB = document.createElement("div")
+    partB.id ="FRANCEINFO_LOGO_PARTB"
+    partB.textContent = ":"
+    logo.appendChild(partB)
+
     var title= document.createElement("div")
     title.id= "FRANCEINFO_TITLE"
     contener.appendChild(article)
@@ -158,26 +171,13 @@ Module.register("MMM-FranceInfo", {
 
     var footer= document.createElement("div")
     footer.id = "FRANCEINFO_FOOTER"
-
-    var logo = document.createElement("div")
-    logo.id = "FRANCEINFO_LOGO"
-    footer.appendChild(logo)
-    partA = document.createElement("div")
-    partA.id ="FRANCEINFO_LOGO_PARTA"
-    partA.textContent = "franceinfo"
-    logo.appendChild(partA)
-    partB = document.createElement("div")
-    partB.id ="FRANCEINFO_LOGO_PARTB"
-    partB.textContent = ":"
-    logo.appendChild(partB)
-
     var source = document.createElement("div")
     source.id = "FRANCEINFO_SOURCE"
     var published = document.createElement("div")
     published.id = "FRANCEINFO_TIME"
     contener.appendChild(footer)
-    footer.appendChild(source)
     footer.appendChild(published)
+    footer.appendChild(source)
 
     wrapper.appendChild(contener)
 

@@ -8,6 +8,8 @@
 #FRANCEINFO_CONTENER {
   line-height:1.1em;
   width: 100%;
+  background-color: #FFF;
+  color: #000;
 }
 
 #FRANCEINFO_CONTENER.showArticle {
@@ -20,10 +22,19 @@
   transition: opacity 1s linear;
 }
 
+#FRANCEINFO_TITLE {
+  margin-left: auto;
+  margin-right: auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 #FRANCEINFO_ARTICLE {
-  display:block;
-  color: #F99;
-  font-size:90%;
+  color: #000;
+  font-size: 90%;
+  background-color: #fdc401;
+  display: flex;
 }
 
 #FRANCEINFO_CONTENT {
@@ -46,26 +57,26 @@
 }
 
 #FRANCEINFO_LOGO {
-  font-size:65%;
-  text-align:right;
-  display:inline-block;
+  font-size: 100%;
   font-weight: bold;
+  background-color: #000;
+  color: #FFF;
+  display: flex;
 }
 
 #FRANCEINFO_LOGO_PARTA {
-  text-align:right;
-  display:inline-block;
+  margin-left: 10px;
 }
 
 #FRANCEINFO_LOGO_PARTB {
-  display: inline-block;
   color: #fdc401;
+  margin-right: 10px;
 }
 
 #FRANCEINFO_SOURCE,
 #FRANCEINFO_TIME {
-  font-size:60%;
-  text-align:right;
-  display:inline-block;
-  margin-left: 5px;
+  font-size: 60%;
+  text-align: right;
+  display: inline-block;
+  margin-right: 8px;
 }
