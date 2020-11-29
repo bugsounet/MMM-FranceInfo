@@ -9,7 +9,6 @@ Module.register("MMM-FranceInfo", {
   /** config par default **/
   defaults: {
     debug: false,
-    dev: false,
     update: "15m",
     speed: "15s",
     maxItems: 100,
@@ -55,6 +54,7 @@ Module.register("MMM-FranceInfo", {
     this.item = 0
     this.RSS = []
     this.update = null
+    this.fade = null
     this.config.speed = this.getUpdateTime(this.config.speed)
     console.log("[FRINFO] Démarrage de MMM-FranceInfo")
   },
@@ -109,7 +109,7 @@ Module.register("MMM-FranceInfo", {
     var source = document.getElementById("FRANCEINFO_SOURCE")
     var published = document.getElementById("FRANCEINFO_TIME")
 
-    setTimeout(()=>{
+    this.fade = setTimeout(()=>{
       title.innerHTML = this.RSS[this.item].title
       image.src = this.RSS[this.item].image
       description.innerHTML = this.RSS[this.item].description
@@ -166,14 +166,23 @@ Module.register("MMM-FranceInfo", {
     return ["MMM-FranceInfo.css"]
   },
 
-/** pour une utilisation ultérieur
+  /** Suspend le module completement **/
   suspend: function () {
-    console.log("suspended")
+    clearInterval(this.update)
+    clearTimeout(this.fade)
+    var contener = document.getElementById("FRANCEINFO_CONTENER")
+    contener.classList.add("hideArticle")
+    contener.classList.remove("showArticle")
+    this.sendSocketNotification("SUSPEND")
+    console.log("MMM-FranceInfo is suspended.")
   },
+
+  /** resume le module **/
   resume: function () {
-    console.log("resumed")
+    console.log("MMM-FranceInfo is resumed.")
+    this.displayChoice()
+    setTimeout (() => {this.sendSocketNotification("RESUME")}, 3000)
   },
-**/
 
   /** ***** **/
   /** Tools **/

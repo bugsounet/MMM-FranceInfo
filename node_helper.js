@@ -163,6 +163,13 @@ module.exports = NodeHelper.create({
         log("RSSConfig:", this.RSSConfig)
         if (!this.error) this.initialize()
         break
+      case "SUSPEND":
+        clearInterval(this.updateTimer)
+        log("Update Timer Off")
+        break
+      case "RESUME":
+        this.update()
+        this.scheduleNextFetch()
     }
   },
 
@@ -264,7 +271,6 @@ module.exports = NodeHelper.create({
   /** envoie les Datas a MMM-FranceInfo.js **/
   sendDATA: function (data) {
     if (data.length) this.sendSocketNotification("DATA", data)
-    if (this.config.dev) log("DATA:", data)
   },
 
   /** Mise a jour des données **/
