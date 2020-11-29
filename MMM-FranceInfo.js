@@ -112,6 +112,7 @@ Module.register("MMM-FranceInfo", {
     this.fade = setTimeout(()=>{
       title.innerHTML = this.RSS[this.item].title
       image.src = this.RSS[this.item].image
+      image.addEventListener('error', () => { image.src = this.file("franceinfo.png") }, false)
       description.innerHTML = this.RSS[this.item].description
       source.textContent = this.RSS[this.item].from + (this.config.debug ? " (" + this.item + "/" + this.RSS.length + ")" : "")
       published.textContent = moment(new Date(this.RSS[this.item].pubdate)).fromNow()
@@ -148,6 +149,19 @@ Module.register("MMM-FranceInfo", {
 
     var footer= document.createElement("div")
     footer.id = "FRANCEINFO_FOOTER"
+
+    var logo = document.createElement("div")
+    logo.id = "FRANCEINFO_LOGO"
+    footer.appendChild(logo)
+    partA = document.createElement("div")
+    partA.id ="FRANCEINFO_LOGO_PARTA"
+    partA.textContent = "franceinfo"
+    logo.appendChild(partA)
+    partB = document.createElement("div")
+    partB.id ="FRANCEINFO_LOGO_PARTB"
+    partB.textContent = ":"
+    logo.appendChild(partB)
+
     var source = document.createElement("div")
     source.id = "FRANCEINFO_SOURCE"
     var published = document.createElement("div")

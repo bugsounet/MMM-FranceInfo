@@ -254,7 +254,7 @@ module.exports = NodeHelper.create({
           pubdate: item.pubdate,
           image: item.enclosure && item.enclosure.url ? item.enclosure.url : null,
           url: item.link,
-          from: "franceinfo: " + from
+          from: from
         })
       })
       rss.on("end", () => {

@@ -45,6 +45,23 @@
   text-align:right;
 }
 
+#FRANCEINFO_LOGO {
+  font-size:65%;
+  text-align:right;
+  display:inline-block;
+  font-weight: bold;
+}
+
+#FRANCEINFO_LOGO_PARTA {
+  text-align:right;
+  display:inline-block;
+}
+
+#FRANCEINFO_LOGO_PARTB {
+  display: inline-block;
+  color: #fdc401;
+}
+
 #FRANCEINFO_SOURCE,
 #FRANCEINFO_TIME {
   font-size:60%;

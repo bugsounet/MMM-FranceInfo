@@ -1,6 +1,6 @@
 {
   "name": "MMM-FranceInfo",
-  "version": "0.0.1",
+  "version": "1.0.0-Dev",
   "description": "France Info Rss Reader",
   "main": "MMM-FranceInfo.js",
   "repository": {
