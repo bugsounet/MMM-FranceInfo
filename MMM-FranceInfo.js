@@ -8,9 +8,9 @@
 Module.register("MMM-FranceInfo", {
   defaults: {
     debug: false,
-    dev: true,
+    dev: false,
     update: "15m",
-    maxItems: 3,
+    maxItems: 10,
     flux: [
       "Titres",
       //"Vidéos",

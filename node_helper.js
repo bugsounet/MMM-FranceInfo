@@ -11,9 +11,12 @@ const request = require("request")
 var log = (...args) => { /* do nothing */ }
 
 module.exports = NodeHelper.create({
+  /** Initialisation au demarrage des données **/
   start: function () {
     console.log("[FRINFO] MMM-FranceInfo Version:", require('./package.json').version)
     this.RSS= []
+    this.RSSConfig= []
+    this.RSSLoaded = []
     this.flux= [
       {
         from: "Titres",
@@ -145,42 +148,54 @@ module.exports = NodeHelper.create({
       },
     ]
     this.error = false
+    this.updateTimer = null
   },
 
+  /** donnée reçu depuis le module MMM-FranceInfo.js **/
   socketNotificationReceived: function (notification, payload) {
     switch (notification) {
       case "CONFIG":
         this.config = payload
         if (this.config.debug) log = (...args) => { console.log("[FRINFO]", ...args) }
+        this.config.update = this.getUpdateTime(this.config.update)
         log("Config:" , this.config)
         this.checkConfig()
+        log("RSSConfig:", this.RSSConfig)
         if (!this.error) this.initialize()
         break
     }
   },
 
+  /** Verif de la config et cree la config finale des liens RSS a lire **/
   checkConfig() {
+    this.RSSConfig = []
     this.config.flux.forEach(flux => {
-      if (this.flux.map((e) => { return e.from } ).indexOf(flux) < 0) {
+      if (this.flux.map((e) => { return e.from }).indexOf(flux) < 0) {
         console.log("[FRINFO] Erreur, Flux Rss inconnu:", flux)
         this.error = true
+      } else {
+        this.flux.map((e) => {
+          if (e.from == flux) this.RSSConfig.push(e)
+        })
       }
     })
   },
 
+  /** initialisation des données **/
   initialize: async function () {
     await this.getInfos()
-    log("Flux RSS chargé: " + this.config.flux.length + "/" + this.flux.length)
+    log("Flux RSS chargé: " + this.config.flux.length + "/" + this.flux.length, this.RSSLoaded)
     console.log("[FRINFO] MMM-FranceInfo est maintenant initialisé !")
     this.sendSocketNotification("INITIALIZED")
+    this.scheduleNextFetch()
   },
 
+  /** stock les données + post traitement : classe par dates, limite nombre d'entrée **/
   getInfos: async function () {
-    // fetch all RSS infos
-    await this.checkRSS()
+    this.RSSLoaded = await this.checkRSS()
+
     log("Titres trouvés:", this.RSS.length)
 
-    // sort by date
     this.RSS.sort(function (a, b) {
       var dateA = new Date(a.pubdate);
       var dateB = new Date(b.pubdate);
@@ -193,25 +208,19 @@ module.exports = NodeHelper.create({
      log("Titres affichés:", this.RSS.length)
     }
 
-    if (this.config.dev) log("DATA:", this.RSS)
-    this.sendSocketNotification("DATA", this.RSS)
+    this.sendDATA(this.RSS)
   },
 
-  checkRSS: async function() {
-    /** @todo better **/
-    var count = 0
-    return new Promise(async (resolve, reject) => {
-      this.flux.forEach(async (flux) => {
-        if (this.config.flux.indexOf(flux.from) >= 0) {
-          await this.getRssInfo(flux.from, flux.url)
-          count++
-        }
-        else count++
-        if (count == this.flux.length) resolve()
-      })
+  /** récupere toute les données selon les urls **/
+  checkRSS: function() {
+    let data = []
+    this.RSSConfig.forEach(flux => {
+      data.push(this.getRssInfo(flux.from, flux.url))
     })
+    return Promise.all(data)
   },
 
+  /** interrogation de l'url et traitement des donnée **/
   getRssInfo: function (from, url) {
     return new Promise((resolve, reject) => {
       const rss = new FeedMe()
@@ -223,7 +232,7 @@ module.exports = NodeHelper.create({
         },
         encoding: null
       };
-      log ("Fetch Rss infos for:", from, "(", url, ")")
+      log ("Fetch Rss infos:", from, "(", url, ")")
 
       request(url, opts)
         .on("error", error => {
@@ -232,7 +241,7 @@ module.exports = NodeHelper.create({
         .pipe(rss)
 
       rss.on("item", item => {
-        this.RSS.push({
+        this.RSS.push ({
           title: item.title,
           description: item.description,
           pubdate: item.pubdate,
@@ -242,14 +251,41 @@ module.exports = NodeHelper.create({
         })
       })
       rss.on("end", () => {
-        log("Fetch done for:", from)
-        resolve()
+        log("Fetch done:", from)
+        resolve(from)
       })
       rss.on("error", error => {
-        log("Fetch error for url:", url, error)
+        log("Fetch error:", url, error)
         resolve()
       })
     })
+  },
+
+  /** envoie les Datas a MMM-FranceInfo.js **/
+  sendDATA: function (data) {
+    if (data.length) this.sendSocketNotification("DATA", data)
+    if (this.config.dev) log("DATA:", data)
+  },
+
+  /** Mise a jour des données **/
+  update: async function () {
+    this.RSS= []
+    this.RSSLoaded = []
+    await this.getInfos()
+    log("Mise à jours effectué")
+  },
+
+  /** Timer des mise a jours **/
+  scheduleNextFetch: function () {
+    if (this.config.update < 60 * 1000) {
+      this.config.update = 60 * 1000
+    }
+
+    clearInterval(this.updateTimer)
+    log("Update Timer On:", this.config.update, "ms")
+    this.updateTimer = setInterval(()=> {
+      this.update()
+    },this.config.update)
   },
 
   /** ***** **/
