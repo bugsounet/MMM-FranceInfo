@@ -147,7 +147,7 @@ module.exports = NodeHelper.create({
         url: "https://www.francetvinfo.fr/internet.rss"
       },
     ]
-    this.error = false
+    this.error = 0
     this.updateTimer = null
   },
 
@@ -179,7 +179,7 @@ module.exports = NodeHelper.create({
     this.config.flux.forEach(flux => {
       if (this.flux.map((e) => { return e.from }).indexOf(flux) < 0) {
         console.log("[FRINFO] Erreur, Flux Rss inconnu:", flux)
-        this.error = true
+        this.error = 1
       } else {
         this.flux.map((e) => {
           if (e.from == flux) this.RSSConfig.push(e)
@@ -191,7 +191,8 @@ module.exports = NodeHelper.create({
   /** initialisation des données **/
   initialize: async function () {
     await this.getInfos()
-    log("Flux RSS chargé: " + this.config.flux.length + "/" + this.flux.length, this.RSSLoaded)
+    if (this.RSSLoaded.indexOf("Error") == -1) log("Flux RSS chargé: " + this.config.flux.length + "/" + this.flux.length, this.RSSLoaded)
+    else log ("Some error detected, retry on next fetch")
     console.log("[FRINFO] MMM-FranceInfo est maintenant initialisé !")
     this.sendSocketNotification("INITIALIZED")
     this.scheduleNextFetch()
@@ -202,6 +203,9 @@ module.exports = NodeHelper.create({
     this.RSSLoaded = await this.checkRSS()
 
     log("Titres trouvés:", this.RSS.length)
+    var removeDupli = this.removeDuplicates(this.RSS, "title")
+    log("Doublons supprimés:", this.RSS.length - removeDupli.length)
+    this.RSS= removeDupli
 
     this.RSS.sort(function (a, b) {
       var dateA = new Date(a.pubdate);
@@ -243,7 +247,8 @@ module.exports = NodeHelper.create({
 
       request(url, opts)
         .on("error", error => {
-          log("Error!", error)
+          console.log("[FRINFO] Error! " + error)
+          resolve("Error")
         })
         .pipe(rss)
 
@@ -330,6 +335,21 @@ module.exports = NodeHelper.create({
       }
     }
     return ms
-  }
+  },
+
+  /** remove duplicate **/
+  removeDuplicates: function(originalArray, prop) {
+    var newArray = [];
+    var lookupObject  = {};
+
+    for(var i in originalArray) {
+       lookupObject[originalArray[i][prop]] = originalArray[i];
+    }
+
+    for(i in lookupObject) {
+        newArray.push(lookupObject[i]);
+    }
+    return newArray;
+  },
 
 });

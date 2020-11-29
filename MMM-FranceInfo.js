@@ -44,7 +44,7 @@ Module.register("MMM-FranceInfo", {
       //"Médias",
       //"Cinéma",
       //"Musique",
-      "Internet"
+      //"Internet"
     ]
 
   },
@@ -96,7 +96,10 @@ Module.register("MMM-FranceInfo", {
 
   /** affiche l'article **/
   displayChoice: function () {
-    if (this.RSS.length == 0) return
+    if (this.RSS.length == 0) {
+      this.item = -1
+      return this.DisplayNext()
+    }
     if (this.item > this.RSS.length-1) this.item = 0
 
     var contener = document.getElementById("FRANCEINFO_CONTENER")
@@ -110,15 +113,21 @@ Module.register("MMM-FranceInfo", {
     var published = document.getElementById("FRANCEINFO_TIME")
 
     this.fade = setTimeout(()=>{
-      title.innerHTML = this.RSS[this.item].title
-      image.src = this.RSS[this.item].image
-      image.addEventListener('error', () => { image.src = this.file("franceinfo.png") }, false)
-      description.innerHTML = this.RSS[this.item].description
-      source.textContent = this.RSS[this.item].from + (this.config.debug ? " (" + this.item + "/" + this.RSS.length + ")" : "")
-      published.textContent = moment(new Date(this.RSS[this.item].pubdate)).fromNow()
-      contener.classList.remove("hideArticle")
-      contener.classList.add("showArticle")
-      this.DisplayNext()
+      if (this.RSS[this.item]) {
+        title.innerHTML = this.RSS[this.item].title
+        image.src = this.RSS[this.item].image
+        image.addEventListener('error', () => { image.src = this.file("franceinfo.png") }, false)
+        description.innerHTML = this.RSS[this.item].description
+        source.textContent = this.RSS[this.item].from + (this.config.debug ? " (" + this.item + "/" + this.RSS.length + ")" : "")
+        published.textContent = moment(new Date(this.RSS[this.item].pubdate)).fromNow()
+        contener.classList.remove("hideArticle")
+        contener.classList.add("showArticle")
+        this.DisplayNext()
+      } else {
+        console.log("[FRINFO] RSS error")
+        this.item = 0
+        this.displayChoice()
+      }
     }, 1000)
   },
 
