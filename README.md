@@ -154,6 +154,6 @@ Nombre d'article qui peuvent être affiché (Utilise en cas de plusieures requet
  * Licence: MIT
  
 ## Note @FranceTV
-* Les couleurs, mise en forme ainsi que logo de `franceinfo:` sont utilisé dans ce module, sans accord préalable.
-* Tous droits restent bien sur en faveur de `FranceTV` et `franceinfo:`
+* Les couleurs, mise en forme ainsi que logo de `franceinfo:` sont utilisés dans ce module, sans accord préalable.
+* Tous droits restent bien sûr en faveur de `FranceTV` et `franceinfo:`
 * N'hesitez pas à me contacter, si cela pose réellement souci
