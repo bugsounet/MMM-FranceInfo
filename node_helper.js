@@ -147,7 +147,6 @@ module.exports = NodeHelper.create({
         url: "https://www.francetvinfo.fr/internet.rss"
       },
     ]
-    this.error = 0
     this.updateTimer = null
   },
 
@@ -161,7 +160,7 @@ module.exports = NodeHelper.create({
         log("Config:" , this.config)
         this.checkConfig()
         log("RSSConfig:", this.RSSConfig)
-        if (!this.error) this.initialize()
+        this.initialize()
         break
       case "SUSPEND":
         clearInterval(this.updateTimer)
@@ -179,7 +178,6 @@ module.exports = NodeHelper.create({
     this.config.flux.forEach(flux => {
       if (this.flux.map((e) => { return e.from }).indexOf(flux) < 0) {
         console.log("[FRINFO] Erreur, Flux Rss inconnu:", flux)
-        this.error = 1
       } else {
         this.flux.map((e) => {
           if (e.from == flux) this.RSSConfig.push(e)
@@ -216,7 +214,7 @@ module.exports = NodeHelper.create({
 
     if (this.config.maxItems > 0) {
      this.RSS = this.RSS.slice(0, this.config.maxItems)
-     log("Titres affichés:", this.RSS.length)
+     log("Titres affichés: ", this.RSS.length)
     }
 
     this.sendDATA(this.RSS)
@@ -243,7 +241,7 @@ module.exports = NodeHelper.create({
         },
         encoding: null
       }
-      log ("Fetch Rss infos:", from, "(", url, ")")
+      log ("Fetch Rss infos:", from, "(" + url + ")")
 
       request(url, opts)
         .on("error", error => {
@@ -276,6 +274,7 @@ module.exports = NodeHelper.create({
   /** envoie les Datas a MMM-FranceInfo.js **/
   sendDATA: function (data) {
     if (data.length) this.sendSocketNotification("DATA", data)
+    else console.log("[FRINFO] Erreur: Aucune donnée...")
   },
 
   /** Mise a jour des données **/
