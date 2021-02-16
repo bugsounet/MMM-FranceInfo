@@ -148,6 +148,9 @@ Nombre d'article qui peuvent être affiché (Utilise en cas de plusieures requet
 ## Vous aimez mes modules ?
 [Donation](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=TTHRH94Y4KL36&source=url), afin de m'encourager !
 
+## Support et aide
+Toute aide peut-être demandé sur [le forum 4th Party Modules](http://forum.bugsounet.fr)
+
 ## Crédits:
  * Développeur:
    * @bugsounet
