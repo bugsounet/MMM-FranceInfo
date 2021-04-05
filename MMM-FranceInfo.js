@@ -48,7 +48,7 @@ Module.register("MMM-FranceInfo", {
     ],
     useQRCode: true,
     vertical: {
-      useVertical: true,
+      useVertical: false,
       width: "450px",
       imageMaxWidth: "20vw",
       imageMaxHeight: "20vh"
