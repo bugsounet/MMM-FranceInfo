@@ -71,7 +71,14 @@ npm install
           //"Cinéma",
           //"Musique",
           //"Internet"
-        ]
+        ],
+        useQRCode: true,
+        vertical: {
+          useVertical: false,
+          width: "450px",
+          imageMaxWidth: "20vw",
+          imageMaxHeight: "20vh"
+        }
       }
     },
 ```
@@ -144,6 +151,27 @@ Nombre d'article qui peuvent être affiché (Utilise en cas de plusieures requet
  * Cinéma
  * Musique
  * Internet
+
+### Champ `useQRCode`
+|Champ | type | valeur par défaut
+|---|---|---
+|useQRCode | BOOLEAN | true
+
+Affiche le QRCode relatif à l'article.
+
+### Champ `vertical: {}`
+|Champ | type | valeur par défaut
+|---|---|---
+|vertical | Object | 
+|-useVertical | BOOLEAN | false
+|-width | STRING | 450px
+|-imageMaxWidth | STRING | 20vw
+|-imageMaxHeight | STRING | 20vh
+
+- useVertical: utilisation du module dans une position veticale
+- width: largeur du module
+- imageMaxWidth: largeur maximale de l'image
+- imageMaxHeight: hauteur maximale de l'image
 
 ## Vous aimez mes modules ?
 [Donation](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=TTHRH94Y4KL36&source=url), afin de m'encourager !
