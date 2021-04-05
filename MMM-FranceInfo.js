@@ -45,8 +45,14 @@ Module.register("MMM-FranceInfo", {
       //"Cinéma",
       //"Musique",
       //"Internet"
-    ]
-
+    ],
+    useQRCode: true,
+    vertical: {
+      useVertical: true,
+      width: "450px",
+      imageMaxWidth: "20vw",
+      imageMaxHeight: "20vh"
+    }
   },
 
   /** demarrage et initialisation **/
@@ -77,7 +83,7 @@ Module.register("MMM-FranceInfo", {
         this.displayChoice()
         break
       case "DATA":
-        console.log("[FRINFO] Data", payload)
+        if (this.config.debug) console.log("[FRINFO] Data", payload)
         this.RSS= payload
         this.item = -1
         break
@@ -85,8 +91,12 @@ Module.register("MMM-FranceInfo", {
   },
 
   /** choisi l'article suivant selon le delai d'update **/
-  DisplayNext: function () {
+  DisplayNext: function (force) {
     if (this.config.speed < 10*1000) this.config.speed = 10*1000
+    if (force) {
+      this.item++
+      this.displayChoice()
+    }
     clearInterval(this.update)
     this.update = setInterval(() => {
       this.item++
@@ -100,7 +110,11 @@ Module.register("MMM-FranceInfo", {
       this.item = -1
       return this.DisplayNext()
     }
-    if (this.item > this.RSS.length-1) this.item = 0
+    if (this.item > this.RSS.length-1) {
+      this.item = -1
+      return this.DisplayNext(true)
+    }
+    if (!this.RSS[this.item] || !this.RSS[this.item].description || this.RSS[this.item].description == "") return this.DisplayNext(true)
 
     var title = document.getElementById("FRANCEINFO_TITLE")
     var image = document.getElementById("FRANCEINFO_IMAGE")
@@ -108,6 +122,7 @@ Module.register("MMM-FranceInfo", {
     var source = document.getElementById("FRANCEINFO_SOURCE")
     var published = document.getElementById("FRANCEINFO_TIME")
     var contener = document.getElementById("FRANCEINFO_CONTENER")
+    if (this.config.useQRCode) var FlashCode= document.getElementById("FRANCEINFO_QRCODE")
 
     contener.classList.add("hideArticle")
     contener.classList.remove("showArticle")
@@ -120,12 +135,35 @@ Module.register("MMM-FranceInfo", {
 
     this.fade = setTimeout(()=>{
       if (this.RSS[this.item]) {
-        title.innerHTML = this.RSS[this.item].title
+        var Source = this.RSS[this.item].from + (this.config.debug ? " [" + this.item + "/" + (this.RSS.length-1) + "]" : "")
+        var Title = this.RSS[this.item].title
+
         image.src = this.RSS[this.item].image
         image.addEventListener('error', () => { image.src = this.file("franceinfo.png") }, false)
-        description.innerHTML = this.RSS[this.item].description
-        source.textContent = this.RSS[this.item].from + (this.config.debug ? " [" + this.item + "/" + this.RSS.length + "]" : "")
-        published.textContent = moment(new Date(this.RSS[this.item].pubdate)).fromNow()
+
+        if (this.config.vertical.useVertical) {
+          title.innerHTML = ""
+          description.innerHTML = this.RSS[this.item].description
+          source.innerHTML = Title
+          published.textContent = moment(new Date(this.RSS[this.item].pubdate)).isValid() ?
+          Source + " ~ " + moment(new Date(this.RSS[this.item].pubdate)).fromNow() : Source + " ~ " + this.RSS[this.item].pubdate
+        } else {
+          title.innerHTML = Title
+          description.innerHTML = this.RSS[this.item].description
+          source.textContent = this.RSS[this.item].from + (this.config.debug ? " [" + this.item + "/" + (this.RSS.length-1) + "]" : "")
+          published.textContent = moment(new Date(this.RSS[this.item].pubdate)).isValid() ?
+          moment(new Date(this.RSS[this.item].pubdate)).fromNow() : this.RSS[this.item].pubdate
+        }
+
+        if (this.RSS[this.item].url && this.config.useQRCode) {
+          var qrcode = new QRCode({
+            content: this.RSS[this.item].url,
+            container: "svg-viewbox", //Responsive use
+            join: true //Crisp rendering and 4-5x reduced file size
+          })
+          FlashCode.innerHTML = qrcode.svg()
+        }
+
         contener.classList.remove("hideArticle")
         contener.classList.add("showArticle")
         source.classList.remove("stop")
@@ -148,6 +186,10 @@ Module.register("MMM-FranceInfo", {
     var contener= document.createElement("div")
     contener.id= "FRANCEINFO_CONTENER"
     contener.classList.add("hideArticle")
+    if (this.config.vertical.useVertical) {
+      contener.classList.add("vertical")
+      contener.style.width = this.config.vertical.width
+    }
 
     var article= document.createElement("div")
     article.id= "FRANCEINFO_ARTICLE"
@@ -166,26 +208,63 @@ Module.register("MMM-FranceInfo", {
 
     var title= document.createElement("div")
     title.id= "FRANCEINFO_TITLE"
+    if (this.config.vertical.useVertical) title.classList.add("vertical")
     contener.appendChild(article)
     article.appendChild(title)
 
     var content= document.createElement("div")
     content.id= "FRANCEINFO_CONTENT"
+    if (this.config.vertical.useVertical) content.classList.add("vertical")
+    var infoContener= document.createElement("div")
+    infoContener.id= "FRANCEINFO_INFO"
     var image = document.createElement("img")
     image.id = "FRANCEINFO_IMAGE"
-    var source = document.createElement("div")
-    source.id = "FRANCEINFO_SOURCE"
+    if (this.config.vertical.useVertical) {
+      image.classList.add("vertical")
+      image.style.maxWidth= this.config.vertical.imageMaxWidth
+      image.style.maxHeight= this.config.vertical.imageMaxHeight
+    }
+
+    if (this.config.useQRCode && this.config.vertical.useVertical) {
+      infoContener.appendChild(image)
+      var ContenerTitle = document.createElement("div")
+      ContenerTitle.id = "FRANCEINFO_CONTENER_TITLE"
+      var QRCode = document.createElement("div")
+      QRCode.id= "FRANCEINFO_QRCODE"
+      QRCode.classList.add("vertical")
+      var source = document.createElement("div")
+      source.id = "FRANCEINFO_SOURCE"
+      source.classList.add("vertical")
+      ContenerTitle.appendChild(QRCode)
+      ContenerTitle.appendChild(source)
+      infoContener.appendChild(ContenerTitle)
+    } else {
+      var source = document.createElement("div")
+      source.id = "FRANCEINFO_SOURCE"
+      if (this.config.vertical.useVertical) source.classList.add("vertical")
+      infoContener.appendChild(image)
+      infoContener.appendChild(source)
+    }
+
     var description= document.createElement("div")
     description.id = "FRANCEINFO_DESCRIPTION"
+    if (this.config.vertical.useVertical) description.classList.add("vertical")
+
+    infoContener.appendChild(description)
     contener.appendChild(content)
-    content.appendChild(image)
-    content.appendChild(source)
-    content.appendChild(description)
+    content.appendChild(infoContener)
+
+    if (this.config.useQRCode && !this.config.vertical.useVertical) {
+      var QRCode = document.createElement("div")
+      QRCode.id= "FRANCEINFO_QRCODE"
+      content.appendChild(QRCode)
+    }
 
     var footer= document.createElement("div")
     footer.id = "FRANCEINFO_FOOTER"
     var published = document.createElement("div")
     published.id = "FRANCEINFO_TIME"
+    if (this.config.vertical.useVertical) published.classList.add("vertical")
     contener.appendChild(footer)
     footer.appendChild(published)
 
@@ -199,22 +278,8 @@ Module.register("MMM-FranceInfo", {
     return ["MMM-FranceInfo.css"]
   },
 
-  /** Suspend le module completement **/
-  suspend: function () {
-    clearInterval(this.update)
-    clearTimeout(this.fade)
-    var contener = document.getElementById("FRANCEINFO_CONTENER")
-    contener.classList.add("hideArticle")
-    contener.classList.remove("showArticle")
-    this.sendSocketNotification("SUSPEND")
-    console.log("MMM-FranceInfo is suspended.")
-  },
-
-  /** resume le module **/
-  resume: function () {
-    console.log("MMM-FranceInfo is resumed.")
-    this.displayChoice()
-    setTimeout (() => {this.sendSocketNotification("RESUME")}, 3000)
+  getScripts: function() {
+    return ["qrcode.min.js"]
   },
 
   /** ***** **/
