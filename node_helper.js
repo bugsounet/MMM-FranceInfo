@@ -7,15 +7,13 @@
 
 const NodeHelper = require("node_helper")
 const FeedMe = require("feedme")
-const request = require("request")
+const request = require('request').defaults({ rejectUnauthorized: false })
 var log = (...args) => { /* do nothing */ }
 
 module.exports = NodeHelper.create({
   /** Initialisation au demarrage des données **/
   start: function () {
     console.log("[FRINFO] MMM-FranceInfo Version:", require('./package.json').version)
-    process.env.NODE_TLS_REJECT_UNAUTHORIZED = 0
-    console.log("[FRINFO] I have to Fix TLS, please wait hotfix...")
     this.RSS= []
     this.RSSConfig= []
     this.RSSLoaded = []
