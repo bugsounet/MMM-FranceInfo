@@ -12,6 +12,7 @@ Module.register("MMM-FranceInfo", {
     update: "15m",
     speed: "15s",
     maxItems: 100,
+    fontSize: "120%",
     flux: [
       "Les Titres",
       //"Vidéos",
@@ -186,6 +187,7 @@ Module.register("MMM-FranceInfo", {
     var contener= document.createElement("div")
     contener.id= "FRANCEINFO_CONTENER"
     contener.classList.add("hideArticle")
+    contener.style.fontSize= this.config.fontSize
     if (this.config.vertical.useVertical) {
       contener.classList.add("vertical")
       contener.style.width = this.config.vertical.width

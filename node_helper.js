@@ -7,7 +7,7 @@
 
 const NodeHelper = require("node_helper")
 const FeedMe = require("feedme")
-const request = require('request').defaults({ rejectUnauthorized: false })
+const fetch = require("node-fetch")
 var log = (...args) => { /* do nothing */ }
 
 module.exports = NodeHelper.create({
@@ -227,21 +227,22 @@ module.exports = NodeHelper.create({
     return new Promise((resolve, reject) => {
       const rss = new FeedMe()
       const nodeVersion = Number(process.version.match(/^v(\d+\.\d+)/)[1]);
-      const opts = {
-        headers: {
-          "User-Agent": "Mozilla/5.0 (Node.js " + nodeVersion + ") MMM-FranceInfo v" + require('./package.json').version + " (https://github.com/bugsounet/MMM-FranceInfo)",
-          "Cache-Control": "max-age=0, no-cache, no-store, must-revalidate", Pragma: "no-cache"
-        },
-        encoding: null
+      const headers= {
+        "User-Agent": "Mozilla/5.0 (Node.js " + nodeVersion + ") MMM-FranceInfo v" + require('./package.json').version + " (https://github.com/bugsounet/MMM-FranceInfo)",
+        "Cache-Control": "max-age=0, no-cache, no-store, must-revalidate", Pragma: "no-cache"
       }
+
       log ("Fetch Rss infos:", from, "(" + url + ")")
 
-      request(url, opts)
-        .on("error", error => {
+      fetch(url, { headers: headers })
+        .then(NodeHelper.checkFetchStatus)
+        .then((response) => {
+          response.body.pipe(rss)
+        })
+        .catch((error) => {
           console.log("[FRINFO] Error! " + error)
           resolve("Error")
         })
-        .pipe(rss)
 
       rss.on("item", item => {
         this.RSS.push ({
