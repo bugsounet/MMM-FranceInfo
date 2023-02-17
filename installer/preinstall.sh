@@ -21,30 +21,10 @@ cd "$Installer_dir"
 
 source utils.sh
 
-# module name
-Installer_module="MMM-FranceInfo"
-Version="$(node -p -e "require('./../package.json').version")"
-Installer_info "Welcome to $Installer_module v$Version"
-
-# delete package-lock.json (force)
-rm -f ../package-lock.json
-
-# Check not run as root
-if [ "$EUID" -eq 0 ]; then
-  Installer_error "npm install must not be used as root"
-  exit 1
-fi
-
 echo
 
 # go to root of module
 cd ..
 
-# switch branch
-Installer_info "Installing Sources..."
-git checkout -f master 2>/dev/null || Installer_error "Installing Error !"
-git pull 2>/dev/null
+Installer_info "This module is now in End Of Life..."
 
-echo
-Installer_info "Installing all npm libraries..."
-npm prune

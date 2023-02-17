@@ -1,6 +1,6 @@
 {
   "name": "MMM-FranceInfo",
-  "version": "1.0.0",
+  "version": "0.0.0+EOL",
   "description": "France Info Rss Reader",
   "scripts": {
     "preinstall": "installer/preinstall.sh"
