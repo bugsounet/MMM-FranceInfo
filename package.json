@@ -2,9 +2,7 @@
   "name": "MMM-FranceInfo",
   "version": "0.0.0+EOL",
   "description": "France Info Rss Reader",
-  "scripts": {
-    "preinstall": "installer/preinstall.sh"
-  },
+  "main": "MMM-FranceInfo.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/bugsounet/MMM-FranceInfo"
