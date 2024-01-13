@@ -93,14 +93,14 @@ Si vous définissez `debug` sur true `true`, les logs détaillé seront écrit e
 ## Champ `update`
 >|Champ | type | valeur par défaut
 >|---|---|---
->|update | STRING | 15*60*1000
+>|update | NUMBER | 15*60*1000
 
 Temps d'intervale des mise a jours des information RSS en ms. (par défaut: 15min)
 
 ## Champ `speed`
 >|Champ | type | valeur par défaut
 >|---|---|---
->|speed | STRING | 15*1000
+>|speed | NUMBER | 15*1000
 
 Temps d'affichage de l'article. (par défaut: 15sec)
 
