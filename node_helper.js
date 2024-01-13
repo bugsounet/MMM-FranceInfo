@@ -7,7 +7,7 @@
 
 const NodeHelper = require("node_helper")
 const FeedMe = require("feedme")
-const fetch = require("node-fetch")
+const stream = require("stream")
 var log = (...args) => { /* do nothing */ }
 
 module.exports = NodeHelper.create({
@@ -236,8 +236,11 @@ module.exports = NodeHelper.create({
 
       fetch(url, { headers: headers })
         .then(NodeHelper.checkFetchStatus)
-        .then((response) => {
-          response.body.pipe(rss)
+        .then(response => response.body)
+        .then(data => {
+          let nodeStream
+          nodeStream = stream.Readable.fromWeb(data)
+          nodeStream.pipe(rss)
         })
         .catch((error) => {
           console.log("[FRINFO] Error! " + error)

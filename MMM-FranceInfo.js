@@ -9,8 +9,8 @@ Module.register("MMM-FranceInfo", {
   /** config par default **/
   defaults: {
     debug: false,
-    update: "15m",
-    speed: "15s",
+    update: 15*60*1000,
+    speed: 15*1000,
     maxItems: 100,
     fontSize: "120%",
     flux: [
@@ -47,7 +47,6 @@ Module.register("MMM-FranceInfo", {
       //"Musique",
       //"Internet"
     ],
-    useQRCode: true,
     vertical: {
       useVertical: false,
       width: "450px",
@@ -62,7 +61,6 @@ Module.register("MMM-FranceInfo", {
     this.RSS = []
     this.update = null
     this.fade = null
-    this.config.speed = this.getUpdateTime(this.config.speed)
     console.log("[FRINFO] Démarrage de MMM-FranceInfo")
   },
 
@@ -123,7 +121,6 @@ Module.register("MMM-FranceInfo", {
     var source = document.getElementById("FRANCEINFO_SOURCE")
     var published = document.getElementById("FRANCEINFO_TIME")
     var contener = document.getElementById("FRANCEINFO_CONTENER")
-    if (this.config.useQRCode) var FlashCode= document.getElementById("FRANCEINFO_QRCODE")
 
     contener.classList.add("hideArticle")
     contener.classList.remove("showArticle")
@@ -154,15 +151,6 @@ Module.register("MMM-FranceInfo", {
           source.textContent = this.RSS[this.item].from + (this.config.debug ? " [" + this.item + "/" + (this.RSS.length-1) + "]" : "")
           published.textContent = moment(new Date(this.RSS[this.item].pubdate)).isValid() ?
           moment(new Date(this.RSS[this.item].pubdate)).fromNow() : this.RSS[this.item].pubdate
-        }
-
-        if (this.RSS[this.item].url && this.config.useQRCode) {
-          var qrcode = new QRCode({
-            content: this.RSS[this.item].url,
-            container: "svg-viewbox", //Responsive use
-            join: true //Crisp rendering and 4-5x reduced file size
-          })
-          FlashCode.innerHTML = qrcode.svg()
         }
 
         contener.classList.remove("hideArticle")
@@ -227,26 +215,11 @@ Module.register("MMM-FranceInfo", {
       image.style.maxHeight= this.config.vertical.imageMaxHeight
     }
 
-    if (this.config.useQRCode && this.config.vertical.useVertical) {
-      infoContener.appendChild(image)
-      var ContenerTitle = document.createElement("div")
-      ContenerTitle.id = "FRANCEINFO_CONTENER_TITLE"
-      var QRCode = document.createElement("div")
-      QRCode.id= "FRANCEINFO_QRCODE"
-      QRCode.classList.add("vertical")
-      var source = document.createElement("div")
-      source.id = "FRANCEINFO_SOURCE"
-      source.classList.add("vertical")
-      ContenerTitle.appendChild(QRCode)
-      ContenerTitle.appendChild(source)
-      infoContener.appendChild(ContenerTitle)
-    } else {
-      var source = document.createElement("div")
-      source.id = "FRANCEINFO_SOURCE"
-      if (this.config.vertical.useVertical) source.classList.add("vertical")
-      infoContener.appendChild(image)
-      infoContener.appendChild(source)
-    }
+    var source = document.createElement("div")
+    source.id = "FRANCEINFO_SOURCE"
+    if (this.config.vertical.useVertical) source.classList.add("vertical")
+    infoContener.appendChild(image)
+    infoContener.appendChild(source)
 
     var description= document.createElement("div")
     description.id = "FRANCEINFO_DESCRIPTION"
@@ -255,12 +228,6 @@ Module.register("MMM-FranceInfo", {
     infoContener.appendChild(description)
     contener.appendChild(content)
     content.appendChild(infoContener)
-
-    if (this.config.useQRCode && !this.config.vertical.useVertical) {
-      var QRCode = document.createElement("div")
-      QRCode.id= "FRANCEINFO_QRCODE"
-      content.appendChild(QRCode)
-    }
 
     var footer= document.createElement("div")
     footer.id = "FRANCEINFO_FOOTER"
@@ -278,52 +245,5 @@ Module.register("MMM-FranceInfo", {
   /** page de style **/
   getStyles: function() {
     return ["MMM-FranceInfo.css"]
-  },
-
-  getScripts: function() {
-    return ["qrcode.min.js"]
-  },
-
-  /** ***** **/
-  /** Tools **/
-  /** ***** **/
-
-  /** convert h m s to ms
-   ** str sample => "1d 15h 30s"
-   **/
-  getUpdateTime: function(str) {
-    let ms = 0, time, type, value
-    let time_list = ('' + str).split(' ').filter(v => v != '' && /^(\d{1,}\.)?\d{1,}([wdhms])?$/i.test(v))
-
-    for(let i = 0, len = time_list.length; i < len; i++){
-      time = time_list[i]
-      type = time.match(/[wdhms]$/i)
-
-      if(type){
-        value = Number(time.replace(type[0], ''))
-
-        switch(type[0].toLowerCase()){
-          case 'w':
-            ms += value * 604800000
-            break
-          case 'd':
-            ms += value * 86400000
-            break
-          case 'h':
-            ms += value * 3600000
-            break
-          case 'm':
-            ms += value * 60000
-            break
-          case 's':
-            ms += value * 1000
-          break
-        }
-      } else if(!isNaN(parseFloat(time)) && isFinite(time)){
-        ms += parseFloat(time)
-      }
-    }
-    return ms
   }
-
 });
