@@ -70,7 +70,6 @@ npm install
           //"Musique",
           //"Internet"
         ],
-        useQRCode: true,
         vertical: {
           useVertical: false,
           width: "450px",
