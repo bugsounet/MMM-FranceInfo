@@ -1,9 +1,27 @@
 {
   "name": "MMM-FranceInfo",
-  "version": "1.2.0",
-  "rev": "240113",
+  "version": "1.3.0",
+  "rev": "240308",
   "description": "France Info Rss Reader",
   "main": "MMM-FranceInfo.js",
+  "scripts": {
+    "preinstall": "installer/preinstall.sh",
+    "postinstall": "installer/postinstall.sh -m",
+    "update": "installer/update.sh",
+    "reset": "git reset --hard",
+    "clean": "rm -rf node_modules package-lock.json",
+    "lint": "eslint *.js installer/*.js --config eslint.config.js",
+    "lint:fix": "eslint *.js installer/*.js --config eslint.config.js --fix",
+    "test": "npm run lint",
+    "test:minify": "cd installer && node minify.js"
+  },
+  "keywords": [
+    "magic mirror",
+    "module",
+    "news",
+    "french",
+    "franceinfo"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/bugsounet/MMM-FranceInfo"
@@ -13,8 +31,20 @@
   "bugs": {
     "url": "https://github.com/bugsounet/MMM-FranceInfo/issues"
   },
+  "engines": {
+    "node": ">=18"
+  },
   "homepage": "https://github.com/bugsounet/MMM-FranceInfo",
   "dependencies": {
-    "feedme": "^2.0.2"
+    "esbuild": "^0.20.1",
+    "feedme": "^2.0.2",
+    "glob": "^10.3.10",
+    "stream": "^0.0.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "^8.57.0",
+    "@stylistic/eslint-plugin": "^1.6.3",
+    "eslint": "^8.57.0",
+    "eslint-plugin-import": "^2.29.1"
   }
 }
