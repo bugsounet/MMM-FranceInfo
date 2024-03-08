@@ -6,7 +6,7 @@
   "main": "MMM-FranceInfo.js",
   "scripts": {
     "preinstall": "installer/preinstall.sh",
-    "postinstall": "installer/postinstall.sh -m -b",
+    "postinstall": "installer/postinstall.sh -m",
     "update": "installer/update.sh",
     "reset": "git reset --hard",
     "clean": "rm -rf node_modules package-lock.json",
@@ -33,7 +33,9 @@
   },
   "homepage": "https://github.com/bugsounet/MMM-FranceInfo",
   "dependencies": {
-    "feedme": "^2.0.2"
+    "esbuild": "^0.20.1",
+    "feedme": "^2.0.2",
+    "glob": "^10.3.10"
   },
   "devDependencies": {
     "@eslint/js": "^8.57.0",
