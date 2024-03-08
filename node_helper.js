@@ -1,22 +1,23 @@
-/* Magic Mirror
+/*
  * Module: FranceInfo
  *
  * By @bugsounet -- Dupont Cédric <bugsounet@bugsounet.fr>
  * MIT Licensed.
  */
 
-const NodeHelper = require("node_helper")
-const FeedMe = require("feedme")
-const stream = require("stream")
-var log = (...args) => { /* do nothing */ }
+const stream = require("stream");
+const NodeHelper = require("node_helper");
+const FeedMe = require("feedme");
+
+var log = (...args) => { /* do nothing */ };
 
 module.exports = NodeHelper.create({
   /** Initialisation au demarrage des données **/
-  start: function () {
-    console.log("[FRINFO] MMM-FranceInfo Version:", require('./package.json').version)
-    this.RSS= []
-    this.RSSConfig= []
-    this.RSSLoaded = []
+  start () {
+    console.log("[FRINFO] MMM-FranceInfo Version:", require("./package.json").version);
+    this.RSS= [];
+    this.RSSConfig= [];
+    this.RSSLoaded = [];
     this.flux= [
       {
         from: "Les Titres",
@@ -145,109 +146,110 @@ module.exports = NodeHelper.create({
       {
         from: "Internet",
         url: "https://www.francetvinfo.fr/internet.rss"
-      },
-    ]
-    this.updateTimer = null
+      }
+    ];
+    this.updateTimer = null;
   },
 
   /** donnée reçu depuis le module MMM-FranceInfo.js **/
-  socketNotificationReceived: function (notification, payload) {
+  socketNotificationReceived (notification, payload) {
     switch (notification) {
       case "CONFIG":
-        this.config = payload
-        if (this.config.debug) log = (...args) => { console.log("[FRINFO]", ...args) }
-        this.config.update = this.getUpdateTime(this.config.update)
-        log("Config:" , this.config)
-        this.checkConfig()
-        log("RSSConfig:", this.RSSConfig)
-        this.initialize()
-        break
+        this.config = payload;
+        if (this.config.debug) log = (...args) => { console.log("[FRINFO]", ...args); };
+        this.config.update = this.getUpdateTime(this.config.update);
+        log("Config:" , this.config);
+        this.checkConfig();
+        log("RSSConfig:", this.RSSConfig);
+        this.initialize();
+        break;
     }
   },
 
   /** Verif de la config et cree la config finale des liens RSS a lire **/
-  checkConfig() {
-    this.RSSConfig = []
-    this.config.flux.forEach(flux => {
-      if (this.flux.map((e) => { return e.from }).indexOf(flux) < 0) {
-        console.log("[FRINFO] Erreur, Flux Rss inconnu:", flux)
+  checkConfig () {
+    this.RSSConfig = [];
+    this.config.flux.forEach((flux) => {
+      if (this.flux.map((e) => { return e.from; }).indexOf(flux) < 0) {
+        console.log("[FRINFO] Erreur, Flux Rss inconnu:", flux);
       } else {
         this.flux.map((e) => {
-          if (e.from == flux) this.RSSConfig.push(e)
-        })
+          if (e.from === flux) this.RSSConfig.push(e);
+        });
       }
-    })
+    });
   },
 
   /** initialisation des données **/
-  initialize: async function () {
-    await this.getInfos()
-    if (this.RSSLoaded.indexOf("Error") == -1) log("Flux RSS chargé: " + this.config.flux.length + "/" + this.flux.length, this.RSSLoaded)
-    else log ("Some error detected, retry on next fetch")
-    console.log("[FRINFO] MMM-FranceInfo est maintenant initialisé !")
-    this.sendSocketNotification("INITIALIZED")
-    this.scheduleNextFetch()
+  async initialize () {
+    await this.getInfos();
+    if (this.RSSLoaded.indexOf("Error") === -1) log(`Flux RSS chargé: ${this.config.flux.length}/${this.flux.length}`, this.RSSLoaded);
+    else log ("Some error detected, retry on next fetch");
+    console.log("[FRINFO] MMM-FranceInfo est maintenant initialisé !");
+    this.sendSocketNotification("INITIALIZED");
+    this.scheduleNextFetch();
   },
 
   /** stock les données + post traitement : classe par dates, limite nombre d'entrée **/
-  getInfos: async function () {
-    this.RSSLoaded = await this.checkRSS()
+  async getInfos () {
+    this.RSSLoaded = await this.checkRSS();
 
-    log("Titres trouvés:", this.RSS.length)
-    var removeDupli = this.removeDuplicates(this.RSS, "title")
-    log("Doublons supprimés:", this.RSS.length - removeDupli.length)
-    this.RSS= removeDupli
+    log("Titres trouvés:", this.RSS.length);
+    var removeDupli = this.removeDuplicates(this.RSS, "title");
+    log("Doublons supprimés:", this.RSS.length - removeDupli.length);
+    this.RSS= removeDupli;
 
     this.RSS.sort(function (a, b) {
       var dateA = new Date(a.pubdate);
       var dateB = new Date(b.pubdate);
       return dateB - dateA;
-    })
-    log("Titres classés par date: Done ✓")
+    });
+    log("Titres classés par date: Done ✓");
 
     if (this.config.maxItems > 0) {
-     this.RSS = this.RSS.slice(0, this.config.maxItems)
-     log("Titres affichés: ", this.RSS.length)
+      this.RSS = this.RSS.slice(0, this.config.maxItems);
+      log("Titres affichés: ", this.RSS.length);
     }
 
-    this.sendDATA(this.RSS)
+    this.sendDATA(this.RSS);
   },
 
   /** récupere toute les données selon les urls **/
-  checkRSS: function() {
-    let data = []
-    this.RSSConfig.forEach(flux => {
-      data.push(this.getRssInfo(flux.from, flux.url))
-    })
-    return Promise.all(data)
+  checkRSS () {
+    let data = [];
+    this.RSSConfig.forEach((flux) => {
+      data.push(this.getRssInfo(flux.from, flux.url));
+    });
+    return Promise.all(data);
   },
 
   /** interrogation de l'url et traitement des donnée **/
-  getRssInfo: function (from, url) {
+  getRssInfo (from, url) {
     return new Promise((resolve, reject) => {
-      const rss = new FeedMe()
+      const rss = new FeedMe();
       const nodeVersion = Number(process.version.match(/^v(\d+\.\d+)/)[1]);
       const headers= {
-        "User-Agent": "Mozilla/5.0 (Node.js " + nodeVersion + ") MMM-FranceInfo v" + require('./package.json').version + " (https://github.com/bugsounet/MMM-FranceInfo)",
-        "Cache-Control": "max-age=0, no-cache, no-store, must-revalidate", Pragma: "no-cache"
-      }
+        "User-Agent": `Mozilla/5.0 (Node.js ${nodeVersion}) MMM-FranceInfo v${require("./package.json").version} (https://github.com/bugsounet/MMM-FranceInfo)`,
+        "Cache-Control": "max-age=0, no-cache, no-store, must-revalidate",
+        Pragma: "no-cache"
+      };
 
-      log ("Fetch Rss infos:", from, "(" + url + ")")
+      log ("Fetch Rss infos:", from, `(${  url  })`);
 
       fetch(url, { headers: headers })
         .then(NodeHelper.checkFetchStatus)
-        .then(response => response.body)
-        .then(data => {
-          let nodeStream
-          nodeStream = stream.Readable.fromWeb(data)
-          nodeStream.pipe(rss)
+        .then((response) => response.body)
+        .then((data) => {
+          let nodeStream;
+          nodeStream = stream.Readable.fromWeb(data);
+          nodeStream.pipe(rss);
         })
         .catch((error) => {
-          console.log("[FRINFO] Error! " + error)
-          resolve("Error")
-        })
+          console.log(`[FRINFO] Error! ${  error}`);
+          resolve("Error");
+        });
 
-      rss.on("item", item => {
+      rss.on("item", (item) => {
         this.RSS.push ({
           title: item.title,
           description: item.description,
@@ -255,42 +257,42 @@ module.exports = NodeHelper.create({
           image: item.enclosure && item.enclosure.url ? item.enclosure.url : null,
           url: item.link,
           from: from
-        })
-      })
+        });
+      });
       rss.on("end", () => {
-        log("Fetch done:", from)
-        resolve(from)
-      })
-      rss.on("error", error => {
-        log("Fetch error:", url, error)
-        resolve()
-      })
-    })
+        log("Fetch done:", from);
+        resolve(from);
+      });
+      rss.on("error", (error) => {
+        log("Fetch error:", url, error);
+        resolve();
+      });
+    });
   },
 
   /** envoie les Datas a MMM-FranceInfo.js **/
-  sendDATA: function (data) {
-    if (data.length) this.sendSocketNotification("DATA", data)
-    else console.log("[FRINFO] Erreur: Aucune donnée...")
+  sendDATA (data) {
+    if (data.length) this.sendSocketNotification("DATA", data);
+    else console.log("[FRINFO] Erreur: Aucune donnée...");
   },
 
   /** Mise a jour des données **/
-  update: async function () {
-    this.RSS= []
-    this.RSSLoaded = []
-    await this.getInfos()
-    log("Mise à jours effectué")
+  async update () {
+    this.RSS= [];
+    this.RSSLoaded = [];
+    await this.getInfos();
+    log("Mise à jours effectué");
   },
 
   /** Timer des mise a jours **/
-  scheduleNextFetch: function () {
-    if (this.config.update < 60 * 1000) this.config.update = 60 * 1000
+  scheduleNextFetch () {
+    if (this.config.update < 60 * 1000) this.config.update = 60 * 1000;
 
-    clearInterval(this.updateTimer)
-    log("Update Timer On:", this.config.update, "ms")
+    clearInterval(this.updateTimer);
+    log("Update Timer On:", this.config.update, "ms");
     this.updateTimer = setInterval(()=> {
-      this.update()
-    },this.config.update)
+      this.update();
+    },this.config.update);
   },
 
   /** ***** **/
@@ -298,54 +300,54 @@ module.exports = NodeHelper.create({
   /** ***** **/
 
   /** convert h m s to ms **/
-  getUpdateTime: function(str) {
-    let ms = 0, time, type, value
-    let time_list = ('' + str).split(' ').filter(v => v != '' && /^(\d{1,}\.)?\d{1,}([wdhms])?$/i.test(v))
+  getUpdateTime (str) {
+    let ms = 0, time, type, value;
+    let time_list = (`${  str}`).split(" ").filter((v) => v !== "" && /^(\d{1,}\.)?\d{1,}([wdhms])?$/i.test(v));
 
     for(let i = 0, len = time_list.length; i < len; i++){
-      time = time_list[i]
-      type = time.match(/[wdhms]$/i)
+      time = time_list[i];
+      type = time.match(/[wdhms]$/i);
 
       if(type){
-        value = Number(time.replace(type[0], ''))
+        value = Number(time.replace(type[0], ""));
 
         switch(type[0].toLowerCase()){
-          case 'w':
-            ms += value * 604800000
-            break
-          case 'd':
-            ms += value * 86400000
-            break
-          case 'h':
-            ms += value * 3600000
-            break
-          case 'm':
-            ms += value * 60000
-            break
-          case 's':
-            ms += value * 1000
-          break
+          case "w":
+            ms += value * 604800000;
+            break;
+          case "d":
+            ms += value * 86400000;
+            break;
+          case "h":
+            ms += value * 3600000;
+            break;
+          case "m":
+            ms += value * 60000;
+            break;
+          case "s":
+            ms += value * 1000;
+            break;
         }
       } else if(!isNaN(parseFloat(time)) && isFinite(time)){
-        ms += parseFloat(time)
+        ms += parseFloat(time);
       }
     }
-    return ms
+    return ms;
   },
 
   /** remove duplicate **/
-  removeDuplicates: function(originalArray, prop) {
+  removeDuplicates (originalArray, prop) {
     var newArray = [];
     var lookupObject  = {};
 
     for(var i in originalArray) {
-       lookupObject[originalArray[i][prop]] = originalArray[i];
+      lookupObject[originalArray[i][prop]] = originalArray[i];
     }
 
     for(i in lookupObject) {
-        newArray.push(lookupObject[i]);
+      newArray.push(lookupObject[i]);
     }
     return newArray;
-  },
+  }
 
 });
