@@ -36,14 +36,14 @@
   },
   "homepage": "https://github.com/bugsounet/MMM-FranceInfo",
   "dependencies": {
-    "esbuild": "^0.20.1",
+    "esbuild": "^0.20.2",
     "feedme": "^2.0.2",
     "glob": "^10.3.10",
     "stream": "^0.0.2"
   },
   "devDependencies": {
     "@eslint/js": "^8.57.0",
-    "@stylistic/eslint-plugin": "^1.6.3",
+    "@stylistic/eslint-plugin": "^1.7.0",
     "eslint": "^8.57.0",
     "eslint-plugin-import": "^2.29.1"
   }
