@@ -39,7 +39,7 @@
     "esbuild": "^0.22.0",
     "feedme": "^2.0.2",
     "glob": "^10.4.2",
-    "stream": "^0.0.2"
+    "stream": "^0.0.3"
   },
   "devDependencies": {
     "@eslint/js": "^8.57.0",
