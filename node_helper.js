@@ -9,16 +9,17 @@ const stream = require("stream");
 const NodeHelper = require("node_helper");
 const FeedMe = require("feedme");
 
-var log = (...args) => { /* do nothing */ };
+var log = () => { /* do nothing */ };
 
 module.exports = NodeHelper.create({
+
   /** Initialisation au demarrage des données **/
   start () {
     console.log("[FRINFO] MMM-FranceInfo Version:", require("./package.json").version);
-    this.RSS= [];
-    this.RSSConfig= [];
+    this.RSS = [];
+    this.RSSConfig = [];
     this.RSSLoaded = [];
-    this.flux= [
+    this.flux = [
       {
         from: "Les Titres",
         url: "https://www.francetvinfo.fr/titres.rss"
@@ -29,11 +30,11 @@ module.exports = NodeHelper.create({
       },
       {
         from: "Vidéos",
-        url : "https://www.francetvinfo.fr/images/videos.rss"
+        url: "https://www.francetvinfo.fr/images/videos.rss"
       },
       {
         from: "France",
-        url : "https://www.francetvinfo.fr/france.rss"
+        url: "https://www.francetvinfo.fr/france.rss"
       },
       {
         from: "Politique",
@@ -158,7 +159,7 @@ module.exports = NodeHelper.create({
         this.config = payload;
         if (this.config.debug) log = (...args) => { console.log("[FRINFO]", ...args); };
         this.config.update = this.getUpdateTime(this.config.update);
-        log("Config:" , this.config);
+        log("Config:", this.config);
         this.checkConfig();
         log("RSSConfig:", this.RSSConfig);
         this.initialize();
@@ -184,7 +185,7 @@ module.exports = NodeHelper.create({
   async initialize () {
     await this.getInfos();
     if (this.RSSLoaded.indexOf("Error") === -1) log(`Flux RSS chargé: ${this.config.flux.length}/${this.flux.length}`, this.RSSLoaded);
-    else log ("Some error detected, retry on next fetch");
+    else log("Some error detected, retry on next fetch");
     console.log("[FRINFO] MMM-FranceInfo est maintenant initialisé !");
     this.sendSocketNotification("INITIALIZED");
     this.scheduleNextFetch();
@@ -197,7 +198,7 @@ module.exports = NodeHelper.create({
     log("Titres trouvés:", this.RSS.length);
     var removeDupli = this.removeDuplicates(this.RSS, "title");
     log("Doublons supprimés:", this.RSS.length - removeDupli.length);
-    this.RSS= removeDupli;
+    this.RSS = removeDupli;
 
     this.RSS.sort(function (a, b) {
       var dateA = new Date(a.pubdate);
@@ -225,16 +226,16 @@ module.exports = NodeHelper.create({
 
   /** interrogation de l'url et traitement des donnée **/
   getRssInfo (from, url) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const rss = new FeedMe();
       const nodeVersion = Number(process.version.match(/^v(\d+\.\d+)/)[1]);
-      const headers= {
+      const headers = {
         "User-Agent": `Mozilla/5.0 (Node.js ${nodeVersion}) MMM-FranceInfo v${require("./package.json").version} (https://github.com/bugsounet/MMM-FranceInfo)`,
         "Cache-Control": "max-age=0, no-cache, no-store, must-revalidate",
         Pragma: "no-cache"
       };
 
-      log ("Fetch Rss infos:", from, `(${  url  })`);
+      log("Fetch Rss infos:", from, `(${url})`);
 
       fetch(url, { headers: headers })
         .then(NodeHelper.checkFetchStatus)
@@ -245,12 +246,12 @@ module.exports = NodeHelper.create({
           nodeStream.pipe(rss);
         })
         .catch((error) => {
-          console.log(`[FRINFO] Error! ${  error}`);
+          console.log(`[FRINFO] Error! ${error}`);
           resolve("Error");
         });
 
       rss.on("item", (item) => {
-        this.RSS.push ({
+        this.RSS.push({
           title: item.title,
           description: item.description,
           pubdate: item.pubdate,
@@ -278,7 +279,7 @@ module.exports = NodeHelper.create({
 
   /** Mise a jour des données **/
   async update () {
-    this.RSS= [];
+    this.RSS = [];
     this.RSSLoaded = [];
     await this.getInfos();
     log("Mise à jours effectué");
@@ -290,9 +291,9 @@ module.exports = NodeHelper.create({
 
     clearInterval(this.updateTimer);
     log("Update Timer On:", this.config.update, "ms");
-    this.updateTimer = setInterval(()=> {
+    this.updateTimer = setInterval(() => {
       this.update();
-    },this.config.update);
+    }, this.config.update);
   },
 
   /** ***** **/
@@ -301,17 +302,18 @@ module.exports = NodeHelper.create({
 
   /** convert h m s to ms **/
   getUpdateTime (str) {
-    let ms = 0, time, type, value;
-    let time_list = (`${  str}`).split(" ").filter((v) => v !== "" && /^(\d{1,}\.)?\d{1,}([wdhms])?$/i.test(v));
+    let ms = 0,
+      time, type, value;
+    let time_list = (`${str}`).split(" ").filter((v) => v !== "" && (/^(\d{1,}\.)?\d{1,}([wdhms])?$/i).test(v));
 
-    for(let i = 0, len = time_list.length; i < len; i++){
+    for (let i = 0, len = time_list.length; i < len; i++) {
       time = time_list[i];
       type = time.match(/[wdhms]$/i);
 
-      if(type){
+      if (type) {
         value = Number(time.replace(type[0], ""));
 
-        switch(type[0].toLowerCase()){
+        switch (type[0].toLowerCase()) {
           case "w":
             ms += value * 604800000;
             break;
@@ -328,7 +330,7 @@ module.exports = NodeHelper.create({
             ms += value * 1000;
             break;
         }
-      } else if(!isNaN(parseFloat(time)) && isFinite(time)){
+      } else if (!isNaN(parseFloat(time)) && isFinite(time)) {
         ms += parseFloat(time);
       }
     }
@@ -338,13 +340,13 @@ module.exports = NodeHelper.create({
   /** remove duplicate **/
   removeDuplicates (originalArray, prop) {
     var newArray = [];
-    var lookupObject  = {};
+    var lookupObject = {};
 
-    for(var i in originalArray) {
+    for (var i in originalArray) {
       lookupObject[originalArray[i][prop]] = originalArray[i];
     }
 
-    for(i in lookupObject) {
+    for (i in lookupObject) {
       newArray.push(lookupObject[i]);
     }
     return newArray;

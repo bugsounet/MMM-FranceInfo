@@ -1,7 +1,7 @@
 {
   "name": "MMM-FranceInfo",
-  "version": "1.4.0",
-  "rev": "240701",
+  "version": "1.4.1",
+  "rev": "241120",
   "description": "France Info Rss Reader",
   "main": "MMM-FranceInfo.js",
   "scripts": {
@@ -32,19 +32,18 @@
     "url": "https://github.com/bugsounet/MMM-FranceInfo/issues"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "homepage": "https://github.com/bugsounet/MMM-FranceInfo",
   "dependencies": {
-    "esbuild": "^0.22.0",
+    "esbuild": "^0.24.0",
     "feedme": "^2.0.2",
-    "glob": "^10.4.2",
+    "glob": "^11.0.0",
     "stream": "^0.0.3"
   },
   "devDependencies": {
-    "@eslint/js": "^8.57.0",
-    "@stylistic/eslint-plugin": "^1.8.1",
-    "eslint": "^8.57.0",
-    "eslint-plugin-import": "^2.29.1"
+    "@stylistic/eslint-plugin": "^2.11.0",
+    "eslint": "^9.15.0",
+    "eslint-plugin-import": "^2.31.0"
   }
 }
