@@ -66,7 +66,7 @@ Module.register("MMM-FranceInfo", {
   },
 
   /** notification envoyer depuis d'autres modules **/
-  notificationReceived (notification, payload, sender) {
+  notificationReceived (notification) {
     switch (notification) {
       case "DOM_OBJECTS_CREATED":
         this.sendSocketNotification("CONFIG", this.config);
@@ -190,11 +190,11 @@ Module.register("MMM-FranceInfo", {
     var logo = document.createElement("div");
     logo.id = "FRANCEINFO_LOGO";
     article.appendChild(logo);
-    partA = document.createElement("div");
+    var partA = document.createElement("div");
     partA.id = "FRANCEINFO_LOGO_PARTA";
     partA.textContent = "franceinfo";
     logo.appendChild(partA);
-    partB = document.createElement("div");
+    var partB = document.createElement("div");
     partB.id = "FRANCEINFO_LOGO_PARTB";
     partB.textContent = ":";
     logo.appendChild(partB);
