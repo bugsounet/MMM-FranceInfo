@@ -32,7 +32,7 @@
     "url": "https://github.com/bugsounet/MMM-FranceInfo/issues"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "homepage": "https://github.com/bugsounet/MMM-FranceInfo",
   "dependencies": {
@@ -42,7 +42,6 @@
     "stream": "^0.0.3"
   },
   "devDependencies": {
-    "@eslint/js": "^8.57.1",
     "@stylistic/eslint-plugin": "^2.11.0",
     "eslint": "^9.15.0",
     "eslint-plugin-import": "^2.31.0"
