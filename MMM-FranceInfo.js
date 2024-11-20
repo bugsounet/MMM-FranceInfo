@@ -6,11 +6,12 @@
  */
 
 Module.register("MMM-FranceInfo", {
+
   /** config par default **/
   defaults: {
     debug: false,
-    update: 15*60*1000,
-    speed: 15*1000,
+    update: 15 * 60 * 1000,
+    speed: 15 * 1000,
     maxItems: 100,
     fontSize: "120%",
     flux: [
@@ -83,7 +84,7 @@ Module.register("MMM-FranceInfo", {
         break;
       case "DATA":
         if (this.config.debug) console.log("[FRINFO] Data", payload);
-        this.RSS= payload;
+        this.RSS = payload;
         this.item = -1;
         break;
     }
@@ -91,7 +92,7 @@ Module.register("MMM-FranceInfo", {
 
   /** choisi l'article suivant selon le delai d'update **/
   DisplayNext (force) {
-    if (this.config.speed < 10*1000) this.config.speed = 10*1000;
+    if (this.config.speed < 10 * 1000) this.config.speed = 10 * 1000;
     if (force) {
       this.item++;
       this.displayChoice();
@@ -109,7 +110,7 @@ Module.register("MMM-FranceInfo", {
       this.item = -1;
       return this.DisplayNext();
     }
-    if (this.item > this.RSS.length-1) {
+    if (this.item > this.RSS.length - 1) {
       this.item = -1;
       return this.DisplayNext(true);
     }
@@ -131,9 +132,9 @@ Module.register("MMM-FranceInfo", {
     description.classList.add("hideArticle");
     description.classList.remove("showArticle");
 
-    this.fade = setTimeout(()=>{
+    this.fade = setTimeout(() => {
       if (this.RSS[this.item]) {
-        var Source = this.RSS[this.item].from + (this.config.debug ? ` [${this.item  }/${this.RSS.length-1}]` : "");
+        var Source = this.RSS[this.item].from + (this.config.debug ? ` [${this.item}/${this.RSS.length - 1}]` : "");
         var Title = this.RSS[this.item].title;
 
         image.src = this.RSS[this.item].image;
@@ -149,7 +150,7 @@ Module.register("MMM-FranceInfo", {
         } else {
           title.innerHTML = Title;
           description.innerHTML = this.RSS[this.item].description;
-          source.textContent = this.RSS[this.item].from + (this.config.debug ? ` [${this.item}/${this.RSS.length-1}]` : "");
+          source.textContent = this.RSS[this.item].from + (this.config.debug ? ` [${this.item}/${this.RSS.length - 1}]` : "");
           published.textContent = moment(new Date(this.RSS[this.item].pubdate)).isValid()
             ? moment(new Date(this.RSS[this.item].pubdate)).fromNow()
             : this.RSS[this.item].pubdate;
@@ -172,49 +173,49 @@ Module.register("MMM-FranceInfo", {
 
   /** Cree la structure du dom **/
   getDom () {
-    var wrapper= document.createElement("div");
+    var wrapper = document.createElement("div");
 
-    var contener= document.createElement("div");
-    contener.id= "FRANCEINFO_CONTENER";
+    var contener = document.createElement("div");
+    contener.id = "FRANCEINFO_CONTENER";
     contener.classList.add("hideArticle");
-    contener.style.fontSize= this.config.fontSize;
+    contener.style.fontSize = this.config.fontSize;
     if (this.config.vertical.useVertical) {
       contener.classList.add("vertical");
       contener.style.width = this.config.vertical.width;
     }
 
-    var article= document.createElement("div");
-    article.id= "FRANCEINFO_ARTICLE";
+    var article = document.createElement("div");
+    article.id = "FRANCEINFO_ARTICLE";
 
     var logo = document.createElement("div");
     logo.id = "FRANCEINFO_LOGO";
     article.appendChild(logo);
     partA = document.createElement("div");
-    partA.id ="FRANCEINFO_LOGO_PARTA";
+    partA.id = "FRANCEINFO_LOGO_PARTA";
     partA.textContent = "franceinfo";
     logo.appendChild(partA);
     partB = document.createElement("div");
-    partB.id ="FRANCEINFO_LOGO_PARTB";
+    partB.id = "FRANCEINFO_LOGO_PARTB";
     partB.textContent = ":";
     logo.appendChild(partB);
 
-    var title= document.createElement("div");
-    title.id= "FRANCEINFO_TITLE";
+    var title = document.createElement("div");
+    title.id = "FRANCEINFO_TITLE";
     if (this.config.vertical.useVertical) title.classList.add("vertical");
     contener.appendChild(article);
     article.appendChild(title);
 
-    var content= document.createElement("div");
-    content.id= "FRANCEINFO_CONTENT";
+    var content = document.createElement("div");
+    content.id = "FRANCEINFO_CONTENT";
     if (this.config.vertical.useVertical) content.classList.add("vertical");
-    var infoContener= document.createElement("div");
-    infoContener.id= "FRANCEINFO_INFO";
+    var infoContener = document.createElement("div");
+    infoContener.id = "FRANCEINFO_INFO";
     var image = document.createElement("img");
     image.id = "FRANCEINFO_IMAGE";
     if (this.config.vertical.useVertical) {
       image.classList.add("vertical");
-      image.style.maxWidth= this.config.vertical.imageMaxWidth;
-      image.style.maxHeight= this.config.vertical.imageMaxHeight;
+      image.style.maxWidth = this.config.vertical.imageMaxWidth;
+      image.style.maxHeight = this.config.vertical.imageMaxHeight;
     }
 
     var source = document.createElement("div");
@@ -223,7 +224,7 @@ Module.register("MMM-FranceInfo", {
     infoContener.appendChild(image);
     infoContener.appendChild(source);
 
-    var description= document.createElement("div");
+    var description = document.createElement("div");
     description.id = "FRANCEINFO_DESCRIPTION";
     if (this.config.vertical.useVertical) description.classList.add("vertical");
 
@@ -231,7 +232,7 @@ Module.register("MMM-FranceInfo", {
     contener.appendChild(content);
     content.appendChild(infoContener);
 
-    var footer= document.createElement("div");
+    var footer = document.createElement("div");
     footer.id = "FRANCEINFO_FOOTER";
     var published = document.createElement("div");
     published.id = "FRANCEINFO_TIME";
