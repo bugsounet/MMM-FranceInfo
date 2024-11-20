@@ -9,7 +9,7 @@ const stream = require("stream");
 const NodeHelper = require("node_helper");
 const FeedMe = require("feedme");
 
-var log = (...args) => { /* do nothing */ };
+var log = () => { /* do nothing */ };
 
 module.exports = NodeHelper.create({
 
@@ -226,7 +226,7 @@ module.exports = NodeHelper.create({
 
   /** interrogation de l'url et traitement des donnée **/
   getRssInfo (from, url) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const rss = new FeedMe();
       const nodeVersion = Number(process.version.match(/^v(\d+\.\d+)/)[1]);
       const headers = {
