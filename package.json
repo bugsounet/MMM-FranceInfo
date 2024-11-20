@@ -1,7 +1,7 @@
 {
   "name": "MMM-FranceInfo",
-  "version": "1.4.0",
-  "rev": "240701",
+  "version": "1.4.1",
+  "rev": "241120",
   "description": "France Info Rss Reader",
   "main": "MMM-FranceInfo.js",
   "scripts": {
