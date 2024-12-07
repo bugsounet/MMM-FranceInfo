@@ -1,6 +1,6 @@
 {
   "name": "MMM-FranceInfo",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "description": "France Info Rss Reader",
   "keywords": [
     "magic mirror",
@@ -48,5 +48,5 @@
   "engines": {
     "node": ">=20"
   },
-  "rev": "241120"
+  "rev": "241207"
 }
