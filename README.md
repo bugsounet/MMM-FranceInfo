@@ -163,6 +163,13 @@ Nombre d'article qui peuvent être affiché (Utilise en cas de plusieures requet
 - imageMaxWidth: largeur maximale de l'image
 - imageMaxHeight: hauteur maximale de l'image
 
+# Mise à jour
+Afin d'appliquer une mise à jour, utilisez cette commande:
+```
+cd ~/MagicMirror/modules/MMM-FranceInfo
+npm run update
+```
+
 # Crédits:
  * Développeur:
    * @bugsounet
